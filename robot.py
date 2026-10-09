@@ -161,7 +161,8 @@ class Robot:
         return True
 
     # Calculate an A* path to the specified destination.
-    def calculate_path(self, destination, blocked=None):
+    # Count only route recalculations triggered by a collision.
+    def calculate_path(self, destination, blocked=None, is_replan=False):
         self.path = a_star(
             self.position,
             destination,
@@ -169,7 +170,9 @@ class Robot:
         )
 
         self.path_index = 0
-        self.replans += 1
+
+        if is_replan:
+            self.replans += 1
 
         return bool(self.path)
 
@@ -248,7 +251,8 @@ class Robot:
             # Recalculate the route around the temporary blockage.
             self.calculate_path(
                 target,
-                blocked=other_positions
+                blocked=other_positions,
+                is_replan=True
             )
             return
 

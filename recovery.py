@@ -43,17 +43,6 @@ class FailureRecovery:
         if robot is None or robot.failed:
             return False
 
-        drop_position = robot.position
-
-        if (
-            robot.current_task is not None
-            and robot.current_task.status == "Picked Up"
-            and robot.path_index < len(robot.path) - 1
-        ):
-            candidate = robot.path[robot.path_index + 1]
-            if warehouse[candidate[0]][candidate[1]] == 0:
-                drop_position = candidate
-
         robot.failed = True
         robot.state = "FAILED"
         robot.path = []
@@ -65,9 +54,11 @@ class FailureRecovery:
             package.assigned_robot = None
 
             if package.status == "Picked Up":
-                package.current_position = drop_position
+                # Drop the carried package at the robot's current position.
+                package.current_position = robot.position
                 package.status = "Dropped"
             else:
+                # Return an uncollected package to its pickup location.
                 package.current_position = package.pickup
                 package.status = "Waiting"
 

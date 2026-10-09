@@ -499,7 +499,7 @@ The robot:
 5. Continues toward the goal.
 
 Important:
-Dynamic replanning is implemented in the robot navigation logic and was observed during simulation when a robot encountered a dynamically occupied path and recalculated its route.
+Dynamic replanning is implemented in the robot navigation logic. During a live simulation, it was observed when a robot encountered a dynamically occupied path and recalculated its route using A*. Keep the testing documentation consistent with this observation: record the collision-triggered replanning test as passed only if the behavior was reproduced and verified during testing.
 
 
 ============================================================
