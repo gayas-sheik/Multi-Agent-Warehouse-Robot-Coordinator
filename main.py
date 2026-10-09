@@ -1,3 +1,4 @@
+
 import sys
 import ctypes
 import pygame
@@ -94,14 +95,17 @@ def main():
         if not paused:
             coordinator.allocate_tasks()
 
-            robot_positions = {
-                robot.position
-                for robot in robots
-                if not robot.failed
-            }
-
+            # Refresh occupied cells before each robot moves.
             for robot in robots:
-                other_positions = robot_positions - {robot.position}
+                if robot.failed:
+                    continue
+
+                other_positions = {
+                    other.position
+                    for other in robots
+                    if other is not robot and not other.failed
+                }
+
                 robot.update(other_positions)
 
         simulation_surface.fill(BACKGROUND)
@@ -138,8 +142,7 @@ def main():
 
         window_width, window_height = screen.get_size()
 
-        # Preserve the 1280×800 aspect ratio so the grid and UI
-        # never become stretched or distorted when the window changes size.
+        # Preserve the original aspect ratio when resizing.
         scale = min(
             window_width / WIDTH,
             window_height / HEIGHT
